@@ -15,7 +15,6 @@
             padding-bottom: 80px;
         }
 
-        /* ---- 布局 ---- */
         .container { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
 
         .header { text-align: center; margin-bottom: 28px; padding-top: 8px; }
@@ -134,7 +133,52 @@
         .page { display: none; }
         .page.active { display: block; }
 
-        /* ---- 加载页 ---- */
+        /* ---- 情绪签到（横条选择器） ---- */
+        .mood-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .mood-btn {
+            flex: 1;
+            padding: 10px 4px;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            background: rgba(196, 149, 106, 0.06);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s;
+            touch-action: manipulation;
+        }
+        .mood-btn .emoji { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+        .mood-btn .label { font-size: 0.65rem; color: #a1887f; }
+        .mood-btn:active { transform: scale(0.93); }
+        .mood-btn.selected {
+            border-color: #c4956a;
+            background: rgba(196, 149, 106, 0.12);
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(196, 149, 106, 0.2);
+        }
+        .mood-btn.selected .label { color: #5d4037; font-weight: 600; }
+
+        .shift-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            animation: popIn 0.5s ease;
+            margin-bottom: 14px;
+        }
+        .shift-badge.up { background: #e8f5e9; color: #2e7d32; }
+        .shift-badge.same { background: #fff8e1; color: #f57f17; }
+        .shift-badge.down { background: #fbe9e7; color: #c62828; }
+        .shift-badge .arrow { font-size: 1.1rem; }
+
+        /* ---- 加载 & 仪式 ---- */
         .loading-box { text-align: center; padding: 60px 20px; }
         .spinner {
             width: 50px; height: 50px;
@@ -157,6 +201,76 @@
             height: 100%; background: #c4956a;
             width: 0%;
             animation: prog 20s ease-out forwards;
+        }
+
+        .ritual-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(93, 64, 55, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 90;
+            padding: 30px;
+        }
+        .ritual-overlay.show { display: flex; }
+
+        .ritual-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 36px 28px 28px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        }
+        .ritual-box .ritual-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .ritual-box .ritual-title { font-size: 1.1rem; font-weight: 600; color: #5d4037; margin-bottom: 8px; }
+        .ritual-box .ritual-desc { font-size: 0.9rem; color: #8d6e63; line-height: 1.7; margin-bottom: 16px; }
+        .ritual-steps { text-align: left; margin-bottom: 18px; }
+        .ritual-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.5s ease;
+        }
+        .ritual-step.visible { opacity: 1; transform: translateX(0); }
+        .ritual-step .check {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 2px solid #e9c496;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.4s;
+            font-size: 0.8rem;
+        }
+        .ritual-step.done .check {
+            background: #c4956a;
+            border-color: #c4956a;
+            color: #fff;
+        }
+        .ritual-step .text { font-size: 0.9rem; color: #5d4037; }
+        .ritual-step.done .text { color: #c4956a; }
+        .ritual-progress {
+            width: 100%; height: 3px;
+            background: #e9c496;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .ritual-progress-bar {
+            height: 100%;
+            background: #c4956a;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+            width: 0%;
         }
 
         /* ---- 结果页 ---- */
@@ -212,7 +326,49 @@
         .btn-row { display: flex; gap: 10px; margin-top: 8px; }
         .btn-row .btn { flex: 1; }
 
-        /* ---- AI疗愈师 ---- */
+        /* ---- 内心小孩回信 ---- */
+        .child-letter-card {
+            background: linear-gradient(135deg, #fef9f0 0%, #fdf6ed 100%);
+            border: 1.5px solid rgba(196, 149, 106, 0.15);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .child-letter-card::before {
+            content: '💌';
+            position: absolute;
+            top: -10px; right: 16px;
+            font-size: 1.6rem;
+        }
+        .child-letter-card .label {
+            font-size: 0.75rem;
+            color: #c4956a;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .child-letter-card .letter-text {
+            font-style: italic;
+            color: #5d4037;
+            line-height: 1.9;
+            font-size: 0.92rem;
+            padding-left: 10px;
+            border-left: 2px dashed #c4956a;
+        }
+        .child-letter-card .letter-text.loading {
+            color: #a1887f;
+            border-left-color: #e9c496;
+        }
+        .child-letter-card .retry {
+            font-size: 0.75rem;
+            color: #c4956a;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 6px;
+            display: inline-block;
+        }
+
+        /* ---- 疗愈师卡片 ---- */
         .healer-card {
             background: linear-gradient(135deg, #fff8f0 0%, #fef5ed 100%);
             border: 1.5px solid rgba(196, 149, 106, 0.2);
@@ -231,18 +387,20 @@
         .healer-avatar {
             width: 36px; height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #c4956a, #d4a373);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
             flex-shrink: 0;
+            transition: background 0.3s;
         }
+        .healer-avatar.tender { background: linear-gradient(135deg, #a1887f, #bcaaa4); }
+        .healer-avatar.warm { background: linear-gradient(135deg, #c4956a, #d4a373); }
+        .healer-avatar.energetic { background: linear-gradient(135deg, #c4956a, #ffcc80); }
 
         .healer-name { font-weight: 600; color: #5d4037; font-size: 0.95rem; }
         .healer-role { font-size: 0.72rem; color: #a1887f; }
 
-        /* GROW 阶段标签 */
         .grow-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -265,12 +423,7 @@
             padding-left: 8px;
             border-left: 3px solid #c4956a;
         }
-
-        .healer-text.loading {
-            color: #a1887f;
-            font-style: italic;
-            border-left-color: #e9c496;
-        }
+        .healer-text.loading { color: #a1887f; font-style: italic; border-left-color: #e9c496; }
 
         .retry-hint {
             font-size: 0.78rem;
@@ -281,6 +434,24 @@
             text-underline-offset: 2px;
         }
         .retry-hint:active { opacity: 0.7; }
+
+        .crisis-line {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(239, 83, 80, 0.06);
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: #a1887f;
+            line-height: 1.5;
+            display: none;
+        }
+        .crisis-line.show { display: block; }
+        .crisis-line .hotline {
+            display: block;
+            margin-top: 3px;
+            font-weight: 600;
+            color: #c4956a;
+        }
 
         /* ---- 对话区 ---- */
         .chat-area {
@@ -296,7 +467,6 @@
             overflow-y: auto;
             margin-bottom: 10px;
         }
-
         .chat-msg { margin-bottom: 10px; animation: popIn 0.3s ease; }
         .chat-msg.user { text-align: right; }
         .chat-msg.user .msg-bubble {
@@ -309,7 +479,6 @@
             color: #5d4037;
             border-radius: 14px 14px 14px 4px;
         }
-
         .msg-bubble {
             display: inline-block;
             padding: 10px 14px;
@@ -321,11 +490,7 @@
             white-space: pre-wrap;
         }
 
-        .chat-input-wrap {
-            display: flex;
-            gap: 8px;
-        }
-
+        .chat-input-wrap { display: flex; gap: 8px; }
         .chat-input-wrap input {
             flex: 1;
             padding: 10px 12px;
@@ -336,7 +501,6 @@
             font-family: inherit;
         }
         .chat-input-wrap input:focus { border-color: #c4956a; }
-
         .chat-input-wrap button {
             padding: 10px 16px;
             background: #c4956a;
@@ -351,7 +515,6 @@
             min-width: 52px;
         }
         .chat-input-wrap button:disabled { opacity: 0.5; cursor: not-allowed; }
-
         .typing-indicator {
             font-size: 0.8rem;
             color: #a1887f;
@@ -372,6 +535,50 @@
         .wall-header .icon { font-size: 1.6rem; margin-bottom: 4px; }
         .wall-header h3 { color: #5d4037; font-size: 1rem; font-weight: 600; }
         .wall-header p { color: #8d6e63; font-size: 0.8rem; margin-top: 4px; line-height: 1.5; }
+
+        /* 情绪时间线 */
+        .mood-timeline {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(212, 163, 115, 0.1);
+        }
+        .mood-timeline .tl-title {
+            font-size: 0.82rem;
+            color: #8d6e63;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tl-track {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tl-item {
+            flex-shrink: 0;
+            text-align: center;
+            width: 32px;
+        }
+        .tl-dot {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            margin: 0 auto 3px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .tl-dot:active { transform: scale(1.3); }
+        .tl-date { font-size: 0.58rem; color: #bcaaa4; }
+        .tl-empty {
+            color: #bcaaa4;
+            font-size: 0.78rem;
+            text-align: center;
+            padding: 10px 0;
+        }
 
         .wall-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
@@ -400,17 +607,6 @@
 
         .wall-empty { grid-column: 1 / -1; text-align: center; padding: 40px; color: #8d6e63; }
         .wall-empty .big { font-size: 2.5rem; margin-bottom: 8px; opacity: 0.5; }
-
-        /* ---- 疗愈日记 ---- */
-        .diary-entry {
-            background: #fff;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            border-left: 3px solid #c4956a;
-        }
-        .diary-entry .ddate { font-size: 0.7rem; color: #bcaaa4; margin-bottom: 4px; }
-        .diary-entry .dquote { font-size: 0.88rem; color: #5d4037; line-height: 1.6; font-style: italic; }
 
         /* ---- 每日一语 ---- */
         .daily-card {
@@ -496,7 +692,8 @@
         .modal-box img { width: 100%; border-radius: 12px; margin-bottom: 12px; }
         .modal-box .mtags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
         .modal-box .mtag { padding: 2px 8px; background: rgba(196, 149, 106, 0.1); color: #c4956a; border-radius: 8px; font-size: 0.75rem; }
-        .modal-box .mtxt { color: #8d6e63; font-style: italic; line-height: 1.6; font-size: 0.9rem; }
+        .modal-box .mtxt { color: #8d6e63; font-style: italic; line-height: 1.6; font-size: 0.9rem; margin-bottom: 4px; }
+        .modal-box .mood-tag { font-size: 0.7rem; color: #bcaaa4; margin-bottom: 4px; }
         .modal-box .healer-msg {
             margin-top: 12px;
             padding: 10px 12px;
@@ -505,6 +702,16 @@
             border-radius: 0 10px 10px 0;
             font-size: 0.85rem;
             color: #5d4037;
+            line-height: 1.6;
+        }
+        .modal-box .child-msg {
+            margin-top: 8px;
+            padding: 10px 12px;
+            background: rgba(196, 149, 106, 0.04);
+            border-left: 2px dashed #c4956a;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.82rem;
+            color: #8d6e63;
             line-height: 1.6;
             font-style: italic;
         }
@@ -554,6 +761,19 @@
 
         <!-- ===== 创作页 ===== -->
         <div id="page-input" class="page active">
+            <!-- 情绪签到 -->
+            <div class="card">
+                <div class="card-title">💗 此刻你的整体感受？</div>
+                <div class="mood-row" id="preMoodRow">
+                    <button class="mood-btn" data-val="1"><span class="emoji">💔</span><span class="label">很难受</span></button>
+                    <button class="mood-btn" data-val="2"><span class="emoji">😐</span><span class="label">不太好</span></button>
+                    <button class="mood-btn" data-val="3"><span class="emoji">🙂</span><span class="label">还行</span></button>
+                    <button class="mood-btn" data-val="4"><span class="emoji">😊</span><span class="label">不错</span></button>
+                    <button class="mood-btn" data-val="5"><span class="emoji">🌞</span><span class="label">很好</span></button>
+                </div>
+                <div class="hint" id="preMoodHint">轻轻按一下，记录此刻的感受</div>
+            </div>
+
             <div class="card">
                 <div class="card-title">🌿 此刻的你，是什么状态？</div>
                 <div class="tags-wrap" id="presetTags">
@@ -601,9 +821,23 @@
         <div id="page-loading" class="page">
             <div class="loading-box">
                 <div class="spinner"></div>
-                <p>正在与AI共创你的心象...</p>
-                <small>AI疗愈师正在阅读你的心情<br>大约需要 15-30 秒</small>
+                <p id="loadingMsg">正在与AI共创你的心象...</p>
+                <small id="loadingSub">AI疗愈师正在阅读你的心情<br>大约需要 15-30 秒</small>
                 <div class="progress"><div class="progress-bar"></div></div>
+            </div>
+        </div>
+
+        <!-- ===== 疗愈微仪式（覆盖层） ===== -->
+        <div class="ritual-overlay" id="ritualOverlay">
+            <div class="ritual-box">
+                <div class="ritual-icon" id="ritualIcon">🌬️</div>
+                <div class="ritual-title" id="ritualTitle">轻轻做三件事</div>
+                <div class="ritual-steps" id="ritualSteps">
+                    <div class="ritual-step" data-step="1"><span class="check">1</span><span class="text">看着画面，慢慢呼吸三次</span></div>
+                    <div class="ritual-step" data-step="2"><span class="check">2</span><span class="text">在心里说：我在这里</span></div>
+                    <div class="ritual-step" data-step="3"><span class="check">3</span><span class="text">对自己微笑一下</span></div>
+                </div>
+                <div class="ritual-progress"><div class="ritual-progress-bar" id="ritualBar"></div></div>
             </div>
         </div>
 
@@ -618,20 +852,36 @@
                     <div class="result-tags" id="resTags"></div>
                     <div class="quote" id="resQuote"></div>
 
-                    <!-- AI疗愈师 · GROW教练对话 -->
+                    <!-- 情绪变化徽章 -->
+                    <div id="shiftBadge" style="display:none; text-align:center;"></div>
+
+                    <!-- 内心小孩回信 -->
+                    <div class="child-letter-card" id="childLetterCard" style="display:none;">
+                        <div class="label">💌 你的内心小孩回信了</div>
+                        <div class="letter-text loading" id="childLetterText">正在聆听你写的话...</div>
+                        <span class="retry" id="childLetterRetry" style="display:none;">重新接收 →</span>
+                    </div>
+
+                    <!-- AI疗愈师 · GROW教练 -->
                     <div class="healer-card">
                         <div class="healer-header">
-                            <div class="healer-avatar">🌙</div>
+                            <div class="healer-avatar warm" id="healerAvatar">🌙</div>
                             <div>
-                                <div class="healer-name">AI疗愈师</div>
-                                <div class="healer-role">GROW教练 · 温柔看见</div>
+                                <div class="healer-name" id="healerName">AI疗愈师</div>
+                                <div class="healer-role" id="healerRole">GROW教练 · 温柔看见</div>
                             </div>
                         </div>
                         <div id="growBadge" class="grow-badge" style="display:none;"></div>
                         <div class="healer-text loading" id="healerText">正在聆听你的心情，请稍候...</div>
                         <div class="retry-hint" id="healerRetry" style="display:none;">重新获取回应 →</div>
 
-                        <button class="btn btn-outline btn-small" id="chatToggleBtn" style="margin-top: 12px; display:none;">
+                        <!-- 危机资源入口（按需显示） -->
+                        <div class="crisis-line" id="crisisLine">
+                            💬 如果此刻你非常难过，需要即时支持——
+                            <span class="hotline">☎️ 24h 心理援助热线：400-161-9995</span>
+                        </div>
+
+                        <button class="btn btn-outline btn-small" id="chatToggleBtn" style="margin-top:12px; display:none;">
                             💬 和疗愈师聊聊
                         </button>
 
@@ -650,7 +900,20 @@
                         <button class="btn" id="dlBtn">📥 保存图片</button>
                         <button class="btn btn-outline" id="shareBtn">🔗 分享</button>
                     </div>
-                    <button class="btn btn-outline" id="againBtn" style="margin-top: 10px;">🔄 再生成一张</button>
+                    <button class="btn btn-outline" id="againBtn" style="margin-top:10px;">🔄 再生成一张</button>
+
+                    <!-- 后测情绪 -->
+                    <div class="card" style="margin-top:16px; border:1.5px dashed rgba(196,149,106,0.25);">
+                        <div class="card-title">💗 现在感受如何？</div>
+                        <div class="mood-row" id="postMoodRow">
+                            <button class="mood-btn" data-val="1"><span class="emoji">💔</span><span class="label">很难受</span></button>
+                            <button class="mood-btn" data-val="2"><span class="emoji">😐</span><span class="label">不太好</span></button>
+                            <button class="mood-btn" data-val="3"><span class="emoji">🙂</span><span class="label">还行</span></button>
+                            <button class="mood-btn" data-val="4"><span class="emoji">😊</span><span class="label">不错</span></button>
+                            <button class="mood-btn" data-val="5"><span class="emoji">🌞</span><span class="label">很好</span></button>
+                        </div>
+                        <div class="hint" id="postMoodHint">轻按记录你的感受变化</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -661,6 +924,11 @@
                 <div class="icon">🌌</div>
                 <h3>共鸣墙</h3>
                 <p>每一张心象都是一颗星星。你并不孤独，这些情绪也曾在他人的夜空中闪烁。</p>
+            </div>
+            <!-- 情绪时间线 -->
+            <div class="mood-timeline" id="moodTimeline">
+                <div class="tl-title">📈 你的情绪轨迹</div>
+                <div class="tl-track" id="tlTrack"></div>
             </div>
             <div class="wall-grid" id="wallGrid"></div>
         </div>
@@ -687,7 +955,9 @@
             <img id="modalImg" src="" alt="">
             <div class="mtags" id="modalTags"></div>
             <div class="mtxt" id="modalTxt"></div>
+            <div class="mood-tag" id="modalMood" style="display:none;"></div>
             <div class="healer-msg" id="modalHealer" style="display:none;"></div>
+            <div class="child-msg" id="modalChildLetter" style="display:none;"></div>
             <div class="mdate" id="modalDate"></div>
         </div>
     </div>
@@ -703,13 +973,13 @@
            ============================================================ */
         const MAX_PRESET = 3;
         const MAX_CUSTOM = 5;
-        const CHAT_MAX_LENGTH = 160;
-        const MAX_WALL_ITEMS = 50;
         const API_TIMEOUT_MS = 30000;
         const API_RETRIES = 2;
-        const LS_WALL_KEY = 'mindCanvas_wall_v2';
+        const LS_WALL_KEY = 'mindCanvas_wall_v3';
+        const LS_MOOD_KEY = 'mindCanvas_moodHistory';
         const LS_CHAT_KEY = 'mindCanvas_chat';
         const LS_RESULT_KEY = 'mindCanvas_lastResult';
+        const LS_CHILDTEXT_KEY = 'mindCanvas_childLetter';
 
         const TAGS_EN = Object.freeze({
             '疲惫的': 'exhausted, tired', '焦虑的': 'anxious, worried', '孤独的': 'lonely, alone',
@@ -720,6 +990,17 @@
             '小心翼翼的': 'careful, cautious', '充满希望的': 'full of hope', '紧绷的': 'tense, stressed',
             '自由的': 'free, liberated', '被忽略的': 'neglected, overlooked', '平静的': 'calm, serene'
         });
+
+        const HEAVY_EMOTIONS = ['疲惫的', '焦虑的', '孤独的', '迷茫的', '失落的', '敏感的', '紧绷的', '被忽略的'];
+        const LIGHT_EMOTIONS = ['坚强的', '勇敢的', '温暖的', '自由的', '平静的', '充满希望的', '期待的'];
+
+        const MOOD_LEVELS = Object.freeze([
+            { val: 1, emoji: '💔', label: '很难受', color: '#795548' },
+            { val: 2, emoji: '😐', label: '不太好', color: '#a1887f' },
+            { val: 3, emoji: '🙂', label: '还行',   color: '#c4956a' },
+            { val: 4, emoji: '😊', label: '不错',   color: '#8bc34a' },
+            { val: 5, emoji: '🌞', label: '很好',   color: '#ff9800' }
+        ]);
 
         const GROW_LABELS = Object.freeze({
             greeting: { label: '🌱 倾听', cls: 'g' },
@@ -733,6 +1014,7 @@
         const TEXT_BASE = 'https://text.pollinations.ai';
 
         const DEFAULT_HEALER = '辛苦了。我在这里陪你。不需要急着改变什么，先让自己喘口气。';
+        const DEFAULT_CHILD = '我听到了。谢谢你愿意停下来看看我。有你在，我就不怕了。';
 
         /* ============================================================
            State
@@ -740,10 +1022,13 @@
         let selectedTags = [];
         let customTags = [];
         let currentResult = null;
-        let chatMessages = [];        // { role, text, growStage? }
-        let growStage = 'greeting';   // greeting → goal → reality → options → will
+        let chatMessages = [];
+        let growStage = 'greeting';
         let isGenerating = false;
         let isSendingChat = false;
+
+        let preMood = 0;
+        let postMood = 0;
 
         /* ============================================================
            DOM refs
@@ -765,12 +1050,22 @@
         const genBtn        = $('genBtn');
         const dailyCard     = $('dailyCard');
         const dailyText     = $('dailyText');
+        const loadingMsg    = $('loadingMsg');
+        const loadingSub    = $('loadingSub');
         const imgSkeleton   = $('imgSkeleton');
         const resImg        = $('resImg');
         const resTags       = $('resTags');
         const resQuote      = $('resQuote');
+        const shiftBadge    = $('shiftBadge');
+        const childLetterCard = $('childLetterCard');
+        const childLetterText = $('childLetterText');
+        const childLetterRetry = $('childLetterRetry');
+        const healerAvatar  = $('healerAvatar');
+        const healerName    = $('healerName');
+        const healerRole    = $('healerRole');
         const healerText    = $('healerText');
         const healerRetry   = $('healerRetry');
+        const crisisLine    = $('crisisLine');
         const growBadge     = $('growBadge');
         const chatToggleBtn = $('chatToggleBtn');
         const chatArea      = $('chatArea');
@@ -781,13 +1076,20 @@
         const dlBtn         = $('dlBtn');
         const shareBtn      = $('shareBtn');
         const againBtn      = $('againBtn');
+        const preMoodRow    = $('preMoodRow');
+        const preMoodHint   = $('preMoodHint');
+        const postMoodRow   = $('postMoodRow');
+        const postMoodHint  = $('postMoodHint');
         const wallGrid      = $('wallGrid');
+        const tlTrack       = $('tlTrack');
         const modalBg       = $('modalBg');
         const modalClose    = $('modalClose');
         const modalImg      = $('modalImg');
         const modalTags     = $('modalTags');
         const modalTxt      = $('modalTxt');
+        const modalMood     = $('modalMood');
         const modalHealer   = $('modalHealer');
+        const modalChildLetter = $('modalChildLetter');
         const modalDate     = $('modalDate');
         const toastEl       = $('toast');
         const navItems      = document.querySelectorAll('.nav-item');
@@ -819,7 +1121,6 @@
             } catch (_) { return fallback; }
         }
 
-        /** Fetch with timeout + retry */
         async function fetchWithRetry(url, maxRetries = API_RETRIES) {
             for (let attempt = 0; attempt <= maxRetries; attempt++) {
                 const controller = new AbortController();
@@ -832,13 +1133,89 @@
                 } catch (err) {
                     clearTimeout(timer);
                     if (attempt < maxRetries) {
-                        // wait a bit before retrying (exponential backoff)
                         await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
                         continue;
                     }
                     throw err;
                 }
             }
+        }
+
+        function getMoodInfo(val) {
+            return MOOD_LEVELS.find(m => m.val === val) || MOOD_LEVELS[2];
+        }
+
+        function detectMoodTone() {
+            for (const tag of selectedTags) {
+                if (HEAVY_EMOTIONS.includes(tag)) return 'heavy';
+                if (LIGHT_EMOTIONS.includes(tag)) return 'light';
+            }
+            return 'neutral';
+        }
+
+        function getToneInstruction(tone) {
+            switch(tone) {
+                case 'heavy': return '语气要非常温柔、缓慢，像在轻轻拥抱。多用"辛苦了"、"我懂"。给用户安全感和承载感。';
+                case 'light': return '语气温暖而带着希望，可以轻轻鼓励。肯定用户的感受，温和地微笑。';
+                default: return '语气温暖、平和、接纳。像朋友一样自然。';
+            }
+        }
+
+        /* ============================================================
+           Mood selection (pre + post)
+           ============================================================ */
+        function setupMoodRow(row, hintEl, callback) {
+            row.addEventListener('click', (e) => {
+                const btn = e.target.closest('.mood-btn');
+                if (!btn) return;
+                row.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                const val = parseInt(btn.dataset.val, 10);
+                hintEl.textContent = getMoodInfo(val).label;
+                callback(val);
+            });
+        }
+
+        setupMoodRow(preMoodRow, preMoodHint, (val) => { preMood = val; });
+        setupMoodRow(postMoodRow, postMoodHint, (val) => {
+            postMood = val;
+            showShiftBadge();
+            saveMoodHistory();
+        });
+
+        function showShiftBadge() {
+            if (!preMood || !postMood) return;
+
+            const diff = postMood - preMood;
+            let cls, arrow, text;
+            if (diff > 0) {
+                cls = 'up'; arrow = '📈'; text = `从 ${getMoodInfo(preMood).emoji} 到 ${getMoodInfo(postMood).emoji}，你的感受在好转`;
+            } else if (diff === 0) {
+                cls = 'same'; arrow = '➡️'; text = `保持 ${getMoodInfo(preMood).emoji}，稳稳地在这里`;
+            } else {
+                cls = 'down'; arrow = '📉'; text = `从 ${getMoodInfo(preMood).emoji} 到 ${getMoodInfo(postMood).emoji}，看到你真实的感受了`;
+            }
+
+            if (diff !== 0) {
+                text += ` ${Math.abs(diff)} 个刻度`;
+            }
+
+            shiftBadge.className = 'shift-badge ' + cls;
+            shiftBadge.innerHTML = `<span class="arrow">${arrow}</span> ${text}`;
+            shiftBadge.style.display = '';
+        }
+
+        function saveMoodHistory() {
+            if (!preMood || !postMood) return;
+            const history = loadFromLS(LS_MOOD_KEY, []);
+            history.push({
+                date: new Date().toISOString(),
+                pre: preMood,
+                post: postMood,
+                tags: selectedTags.concat(customTags)
+            });
+            if (history.length > 50) history.splice(0, history.length - 50);
+            saveToLS(LS_MOOD_KEY, history);
         }
 
         /* ============================================================
@@ -849,15 +1226,13 @@
         }
 
         function advanceGrowStage(userMsg) {
-            // Rough heuristic: if user gives a substantive reply, advance stage
-            if (!userMsg || userMsg.length < 3) return growStage; // too short, stay
-
+            if (!userMsg || userMsg.length < 3) return growStage;
             const stageOrder = ['greeting', 'goal', 'reality', 'options', 'will'];
             const idx = stageOrder.indexOf(growStage);
             if (idx >= 0 && idx < stageOrder.length - 1) {
                 return stageOrder[idx + 1];
             }
-            return 'will'; // stay at will
+            return 'will';
         }
 
         function updateGrowBadge(stage) {
@@ -868,7 +1243,7 @@
         }
 
         /* ============================================================
-           Prompt builders - GROW framework
+           Prompt builders
            ============================================================ */
         function buildImagePrompt() {
             const enPreset = selectedTags.map(t => TAGS_EN[t] || t).join(', ');
@@ -880,7 +1255,6 @@
             if (enCustom) parts.push(enCustom);
             if (userText)  parts.push(userText);
             parts.push('soft warm colors, dreamy lighting, healing art, pastel tones, hand-drawn illustration, emotional, studio ghibli style, soft edges, gentle background, 8k, detailed');
-
             return parts.join(', ');
         }
 
@@ -888,8 +1262,9 @@
             const allTags = selectedTags.concat(customTags);
             const userText = userTextEl.value.trim();
             const tagStr = allTags.join('、');
+            const tone = detectMoodTone();
+            const toneInstr = getToneInstruction(tone);
 
-            // Build a compact conversation history excerpt
             const recentChats = chatMessages.slice(-6).map(m =>
                 `${m.role === 'user' ? '用户' : '你（疗愈师）'}: ${m.text}`
             ).join('\n');
@@ -897,29 +1272,33 @@
             const systemRole = `你是一位温柔的心理陪伴者，擅长用GROW教练模型进行陪伴式对话。
 
 GROW框架说明：
-G（目标）— 引导用户说出ta想要的感受或状态，比如"你希望自己是什么样的感觉？"
-R（现状）— 温和地帮ta看清当下的处境："现在的情况是怎样的？"
-O（选择）— 一起探索可能的行动或视角："有什么可能的选择或方向？"
-W（意愿）— 鼓励一小步行动："接下来想试试什么？"
+G（目标）— 引导用户说出ta想要的感受或状态
+R（现状）— 温和地帮ta看清当下的处境
+O（选择）— 一起探索可能的行动或视角
+W（意愿）— 鼓励一小步行动
 
 关键原则：
 - 每一步都要温柔、接纳，不强迫推进
-- 用户还没准备好的话，就留在当前阶段
+- 用户还没准备好的话就留在当前阶段
 - 语气像好朋友发微信一样自然，直白，不说教
-- 不要使用任何比喻（不要说"像雾像风像海"）
+- 不要使用任何比喻
 - 控制在80字以内
 - 用中文，只输出回应内容`;
 
             if (isFirst) {
                 return `${systemRole}
 
+${toneInstr}
+
 用户当下的状态：${tagStr}
 用户想对内心小孩说的话：${userText || '无言'}
 
-请先给出一段温暖的接纳和理解（像老朋友一样），然后自然开启GROW的G环节——温和地问问ta想要什么样的感觉或状态。`;
+请先给出一段温暖的接纳和理解，然后自然开启GROW的G环节——温和地问问ta想要什么样的感觉或状态。`;
             }
 
             return `${systemRole}
+
+${toneInstr}
 
 用户信息：状态 - ${tagStr}，内心话语 - ${userText || '无言'}
 
@@ -928,7 +1307,24 @@ ${recentChats}
 
 用户刚刚说：${userMsg}
 
-请根据对话自然推进GROW阶段。不要重复问已经问过的问题。保持在当前阶段的深度陪伴，而不是快速走完所有阶段。`;
+请根据对话自然推进GROW阶段。不要重复问已经问过的问题。保持在当前阶段的深度陪伴。`;
+        }
+
+        function buildChildLetterPrompt() {
+            const userText = userTextEl.value.trim() || '（无言的温柔）';
+            const allTags = selectedTags.concat(customTags);
+            return `你是一个真实的小孩——用户内心深处那个需要被看见的小孩。请以这个"内心小孩"的身份，给"现在的ta"写一封非常简短的感谢信。
+
+用户对你说的话：${userText}
+用户当下的情绪标签：${allTags.join('、')}
+
+要求：
+1. 语气像一个真实的、有点害羞但是真诚的小孩
+2. 30-50字，简短真挚
+3. 先说"我听到了"或"我知道了"
+4. 表达感谢——谢谢ta愿意停下来看看你
+5. 用中文，不用比喻
+6. 只输出回信内容，不要任何前缀`;
         }
 
         function buildImageUrl(prompt) {
@@ -944,7 +1340,7 @@ ${recentChats}
         }
 
         /* ============================================================
-           Healer API call
+           API calls
            ============================================================ */
         async function fetchHealer(prompt) {
             const url = buildTextUrl(prompt);
@@ -959,10 +1355,8 @@ ${recentChats}
         presetTagsEl.addEventListener('click', (e) => {
             const btn = e.target.closest('.tag');
             if (!btn) return;
-
             const val = btn.dataset.val;
             const idx = selectedTags.indexOf(val);
-
             if (idx > -1) {
                 selectedTags.splice(idx, 1);
                 btn.classList.remove('selected');
@@ -982,7 +1376,6 @@ ${recentChats}
         function addCustomTag() {
             const val = customInput.value.trim().replace(/[,，]/g, '');
             if (!val) return;
-
             if (customTags.length >= MAX_CUSTOM) {
                 showToast(`最多添加 ${MAX_CUSTOM} 个自定义词`);
                 customInput.value = '';
@@ -993,7 +1386,6 @@ ${recentChats}
                 customInput.value = '';
                 return;
             }
-
             customTags.push(val);
             renderChips();
             customInput.value = '';
@@ -1040,34 +1432,43 @@ ${recentChats}
                 showToast('请至少选择1个标签或输入1个自定义词');
                 return;
             }
+            if (!preMood) {
+                showToast('请先记录你此刻的感受 💗');
+                return;
+            }
 
             isGenerating = true;
             genBtn.disabled = true;
             growStage = 'greeting';
             chatMessages = [];
+            postMood = 0;
 
             const allTags = selectedTags.concat(customTags);
             const userText = userTextEl.value.trim();
 
             switchPage('loading');
+            loadingMsg.textContent = '正在与AI共创你的心象...';
+            loadingSub.innerHTML = 'AI疗愈师正在阅读你的心情<br>大约需要 15-30 秒';
 
-            // Prepare URLs
             const imgPrompt = buildImagePrompt();
             const imageUrl = buildImageUrl(imgPrompt);
             const healerPrompt = buildHealerPrompt(true, '');
+            const childPrompt = buildChildLetterPrompt();
 
             let imgLoaded = false;
             let textLoaded = false;
+            let childLoaded = false;
             let healerResponse = '';
+            let childLetter = '';
             let imgError = false;
 
-            function tryShowResult() {
-                if (imgLoaded && textLoaded && !imgError) {
-                    finishResult(allTags, userText, imageUrl, healerResponse);
+            function tryShowFinal() {
+                if (imgLoaded && textLoaded && childLoaded && !imgError) {
+                    finishResult(allTags, userText, imageUrl, healerResponse, childLetter);
                 }
             }
 
-            // Load image with retry
+            // 1. Load image with retry
             (async function loadImage() {
                 for (let attempt = 0; attempt <= API_RETRIES; attempt++) {
                     try {
@@ -1079,7 +1480,7 @@ ${recentChats}
                             img.src = imageUrl;
                         });
                         imgLoaded = true;
-                        tryShowResult();
+                        tryShowFinal();
                         return;
                     } catch (_) {
                         if (attempt < API_RETRIES) {
@@ -1094,30 +1495,95 @@ ${recentChats}
                 genBtn.disabled = false;
             })();
 
-            // Fetch healer response with retry
+            // 2. Fetch healer response
             try {
                 healerResponse = await fetchHealer(healerPrompt);
             } catch (_) {
                 healerResponse = DEFAULT_HEALER;
             }
             textLoaded = true;
-            tryShowResult();
+            tryShowFinal();
+
+            // 3. Fetch inner child letter (in parallel)
+            try {
+                childLetter = await fetchHealer(childPrompt);
+            } catch (_) {
+                childLetter = DEFAULT_CHILD;
+            }
+            childLoaded = true;
+            tryShowFinal();
         });
 
-        function finishResult(allTags, userText, imageUrl, healerResponse) {
+        function finishResult(allTags, userText, imageUrl, healerResponse, childLetter) {
             currentResult = {
                 id: Date.now(),
                 imageUrl: imageUrl,
                 tags: allTags,
                 text: userText || '（无言的温柔）',
                 healerText: healerResponse,
+                childLetter: childLetter,
+                preMood: preMood,
                 date: new Date().toLocaleString('zh-CN')
             };
-            saveToLS(LS_RESULT_KEY, { result: currentResult, chat: chatMessages });
-            saveToWall(currentResult);
-            showResult(currentResult);
-            isGenerating = false;
-            genBtn.disabled = false;
+
+            // Show ritual, then result
+            showRitual(() => {
+                saveToLS(LS_RESULT_KEY, { result: currentResult, chat: chatMessages });
+                saveToWall(currentResult);
+                showResult(currentResult);
+                isGenerating = false;
+                genBtn.disabled = false;
+            });
+        }
+
+        /* ============================================================
+           Ritual overlay
+           ============================================================ */
+        let ritualTimer = null;
+
+        function showRitual(callback) {
+            const overlay = $('ritualOverlay');
+            const steps = overlay.querySelectorAll('.ritual-step');
+            const bar = $('ritualBar');
+
+            overlay.classList.add('show');
+            steps.forEach(s => s.classList.remove('visible', 'done'));
+            bar.style.width = '0%';
+
+            const DURATIONS = [0, 1200, 2400, 3600]; // ms for each step reveal
+            const TOTAL = 4200;
+
+            DURATIONS.forEach((t, i) => {
+                setTimeout(() => {
+                    if (i < steps.length) {
+                        steps[i].classList.add('visible');
+                    }
+                }, t);
+            });
+
+            // Animate progress bar
+            let startTime = Date.now();
+            function tickProgress() {
+                const elapsed = Date.now() - startTime;
+                const pct = Math.min(98, (elapsed / TOTAL) * 100);
+                bar.style.width = pct + '%';
+                // Mark steps done
+                const stepIdx = Math.floor((elapsed / TOTAL) * steps.length);
+                steps.forEach((s, idx) => {
+                    if (idx < stepIdx) s.classList.add('done');
+                });
+                if (elapsed < TOTAL) {
+                    ritualTimer = requestAnimationFrame(tickProgress);
+                } else {
+                    bar.style.width = '100%';
+                    steps.forEach(s => s.classList.add('done'));
+                    setTimeout(() => {
+                        overlay.classList.remove('show');
+                        if (callback) callback();
+                    }, 400);
+                }
+            }
+            ritualTimer = requestAnimationFrame(tickProgress);
         }
 
         /* ============================================================
@@ -1139,18 +1605,46 @@ ${recentChats}
             resTags.innerHTML = result.tags.map(t => `<span class="rtag">${escapeHtml(t)}</span>`).join('');
             resQuote.textContent = result.text ? `「${result.text}」` : '';
 
-            // Healer
+            // Healer tone adaptation
+            const tone = detectMoodTone();
+            healerAvatar.className = 'healer-avatar ' + (tone === 'heavy' ? 'tender' : 'warm');
+            healerName.textContent = tone === 'heavy' ? 'AI疗愈师' : 'AI疗愈师';
+            healerRole.textContent = tone === 'heavy'
+                ? '温柔陪伴 · 慢慢来'
+                : tone === 'light'
+                    ? '温暖陪伴 · 我在听'
+                    : 'GROW教练 · 温柔看见';
+
+            // Healer response
             healerText.textContent = result.healerText || '';
             healerText.classList.remove('loading');
             healerRetry.style.display = 'none';
             updateGrowBadge('greeting');
             chatToggleBtn.style.display = 'inline-block';
 
+            // Inner child letter
+            if (result.childLetter) {
+                childLetterCard.style.display = '';
+                childLetterText.textContent = result.childLetter;
+                childLetterText.classList.remove('loading');
+                childLetterRetry.style.display = 'none';
+            }
+
+            // Crisis resource
+            const hasHeavy = selectedTags.some(t => HEAVY_EMOTIONS.includes(t));
+            crisisLine.classList.toggle('show', hasHeavy);
+
             // Reset chat
             chatMessages = [{ role: 'healer', text: result.healerText || '', growStage: 'greeting' }];
             chatHistoryEl.innerHTML = '';
             chatArea.classList.remove('open');
             chatToggleBtn.textContent = '💬 和疗愈师聊聊';
+
+            // Reset post mood
+            postMoodRow.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+            postMoodHint.textContent = '轻按记录你的感受变化';
+            shiftBadge.style.display = 'none';
+            postMood = 0;
         }
 
         /* ============================================================
@@ -1190,7 +1684,6 @@ ${recentChats}
             chatSendBtn.textContent = '...';
             typingIndicator.style.display = 'block';
 
-            // Advance grow stage based on user response
             growStage = advanceGrowStage(text);
             updateGrowBadge(growStage);
 
@@ -1208,7 +1701,6 @@ ${recentChats}
             chatSendBtn.disabled = false;
             chatSendBtn.textContent = '发送';
 
-            // Persist chat
             saveToLS(LS_CHAT_KEY, chatMessages);
             if (currentResult) {
                 const stored = loadFromLS(LS_RESULT_KEY, {});
@@ -1226,7 +1718,7 @@ ${recentChats}
         });
 
         /* ============================================================
-           Healer retry button
+           Retry buttons
            ============================================================ */
         healerRetry.addEventListener('click', async function() {
             healerRetry.style.display = 'none';
@@ -1238,7 +1730,6 @@ ${recentChats}
                 const text = await fetchHealer(prompt);
                 healerText.textContent = text;
                 healerText.classList.remove('loading');
-                // Update result and wall
                 if (currentResult) {
                     currentResult.healerText = text;
                     saveToLS(LS_RESULT_KEY, { result: currentResult, chat: chatMessages });
@@ -1251,6 +1742,28 @@ ${recentChats}
                 healerRetry.style.display = '';
                 healerText.textContent = '网络开小差了';
                 healerText.classList.add('loading');
+            }
+        });
+
+        childLetterRetry.addEventListener('click', async function() {
+            childLetterRetry.style.display = 'none';
+            childLetterText.textContent = '重新接收中...';
+            childLetterText.classList.add('loading');
+
+            const prompt = buildChildLetterPrompt();
+            try {
+                const text = await fetchHealer(prompt);
+                childLetterText.textContent = text;
+                childLetterText.classList.remove('loading');
+                if (currentResult) {
+                    currentResult.childLetter = text;
+                    saveToLS(LS_RESULT_KEY, { result: currentResult, chat: chatMessages });
+                    updateWallItem(currentResult);
+                }
+            } catch (_) {
+                childLetterRetry.style.display = '';
+                childLetterText.textContent = '重新接收';
+                childLetterText.classList.add('loading');
             }
         });
 
@@ -1271,7 +1784,6 @@ ${recentChats}
             if (!currentResult) return;
             const data = btoa(encodeURIComponent(JSON.stringify(currentResult)));
             const url = location.origin + location.pathname + '#share=' + data;
-
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(url).then(
                     () => showToast('链接已复制，发给朋友看看吧'),
@@ -1295,12 +1807,22 @@ ${recentChats}
             healerText.textContent = '正在聆听你的心情，请稍候...';
             healerText.classList.add('loading');
             healerRetry.style.display = 'none';
+            childLetterCard.style.display = 'none';
+            childLetterText.textContent = '正在聆听你写的话...';
+            childLetterText.classList.add('loading');
+            childLetterRetry.style.display = 'none';
             growBadge.style.display = 'none';
+            crisisLine.classList.remove('show');
             chatToggleBtn.style.display = 'none';
             chatArea.classList.remove('open');
             chatMessages = [];
             chatHistoryEl.innerHTML = '';
             growStage = 'greeting';
+            shiftBadge.style.display = 'none';
+            postMood = 0;
+            postMoodRow.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+            postMoodHint.textContent = '轻按记录你的感受变化';
+            // Keep preMood
             switchPage('input');
         });
 
@@ -1310,7 +1832,7 @@ ${recentChats}
         function saveToWall(item) {
             const wall = loadFromLS(LS_WALL_KEY, []);
             wall.unshift(item);
-            if (wall.length > MAX_WALL_ITEMS) wall.length = MAX_WALL_ITEMS;
+            if (wall.length > 50) wall.length = 50;
             saveToLS(LS_WALL_KEY, wall);
             updateDailyQuote();
         }
@@ -1327,6 +1849,9 @@ ${recentChats}
         function renderWall() {
             const wall = loadFromLS(LS_WALL_KEY, []);
 
+            // Mood timeline
+            renderTimeline();
+
             if (wall.length === 0) {
                 wallGrid.innerHTML = '<div class="wall-empty"><div class="big">🌱</div><div>还没有心象卡片</div><div style="font-size:0.78rem;margin-top:6px;">去创作第一张吧</div></div>';
                 return;
@@ -1336,10 +1861,11 @@ ${recentChats}
                 const healerSnip = item.healerText
                     ? `<div class="healer-snip">💬 ${escapeHtml(item.healerText.slice(0, 30))}${item.healerText.length > 30 ? '...' : ''}</div>`
                     : '';
+                const moodEmoji = item.preMood ? getMoodInfo(item.preMood).emoji : '';
                 return `<div class="wall-item" data-idx="${idx}">
                     <div class="img-wrap"><img src="${item.imageUrl}" alt="心象" loading="lazy"></div>
                     <div class="info">
-                        <div class="t">${escapeHtml(item.tags.join(' · '))}</div>
+                        <div class="t">${moodEmoji} ${escapeHtml(item.tags.join(' · '))}</div>
                         <div class="txt">${escapeHtml(item.text)}</div>
                         ${healerSnip}
                     </div>
@@ -1355,6 +1881,27 @@ ${recentChats}
         });
 
         /* ============================================================
+           Mood Timeline
+           ============================================================ */
+        function renderTimeline() {
+            const history = loadFromLS(LS_MOOD_KEY, []);
+            if (history.length === 0) {
+                tlTrack.innerHTML = '<div class="tl-empty">还没有情绪记录——每次生成心象时轻按一下，轨迹就会出现在这里</div>';
+                return;
+            }
+
+            const recent = history.slice(-14).reverse();
+            tlTrack.innerHTML = recent.map(h => {
+                const info = getMoodInfo(h.post || h.pre);
+                const dateStr = new Date(h.date).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' });
+                return `<div class="tl-item" title="${info.label} (${dateStr})">
+                    <div class="tl-dot" style="background:${info.color};"></div>
+                    <div class="tl-date">${dateStr}</div>
+                </div>`;
+            }).join('');
+        }
+
+        /* ============================================================
            Modal
            ============================================================ */
         function openModal(idx) {
@@ -1365,7 +1912,14 @@ ${recentChats}
             modalImg.src = item.imageUrl;
             modalTags.innerHTML = item.tags.map(t => `<span class="mtag">${escapeHtml(t)}</span>`).join('');
             modalTxt.textContent = item.text ? `「${item.text}」` : '';
-            modalDate.textContent = item.date || '';
+
+            if (item.preMood) {
+                const info = getMoodInfo(item.preMood);
+                modalMood.textContent = `💗 心情：${info.emoji} ${info.label}`;
+                modalMood.style.display = '';
+            } else {
+                modalMood.style.display = 'none';
+            }
 
             if (item.healerText) {
                 modalHealer.textContent = `💬 疗愈师说：${item.healerText}`;
@@ -1374,6 +1928,14 @@ ${recentChats}
                 modalHealer.style.display = 'none';
             }
 
+            if (item.childLetter) {
+                modalChildLetter.textContent = `💌 内心小孩：${item.childLetter}`;
+                modalChildLetter.style.display = '';
+            } else {
+                modalChildLetter.style.display = 'none';
+            }
+
+            modalDate.textContent = item.date || '';
             modalBg.classList.add('show');
         }
 
@@ -1410,8 +1972,6 @@ ${recentChats}
                 dailyCard.style.display = 'none';
                 return;
             }
-
-            // Pick based on the day so it's stable
             const dayIdx = new Date().getDate() % withHealer.length;
             const pick = withHealer[dayIdx];
             dailyText.textContent = `「${pick.healerText}」`;
@@ -1444,16 +2004,19 @@ ${recentChats}
             checkShared();
             updateDailyQuote();
 
-            // Restore chat from last session if available
             const saved = loadFromLS(LS_RESULT_KEY, null);
             if (saved && saved.result && saved.chat) {
                 chatMessages = saved.chat;
             }
 
-            // Keyboard shortcut
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') closeModal();
             });
+
+            // If returning to a previous session, restore preMood hint text
+            if (preMood) {
+                preMoodHint.textContent = getMoodInfo(preMood).label;
+            }
         }
 
         init();
