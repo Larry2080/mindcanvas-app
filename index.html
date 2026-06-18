@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心象卡片 - AI内在小孩</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #faf6f1;
+            --bg-2: #f5ebe0;
+            --accent: #d4a373;
+            --accent-light: #e9c496;
+            --text: #5d4037;
+            --text-light: #8d6e63;
+            --card: #ffffff;
+            --shadow: rgba(93, 64, 55, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Serif SC', 'PingFang SC', 'Microsoft YaHei', serif;
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 2.4rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            letter-spacing: 4px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        .page {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .page.active { display: flex; }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 163, 115, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            font-size: 1.3rem;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--accent-light);
+            background: transparent;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .tag:hover {
+            background: rgba(212, 163, 115, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .tag.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(212, 163, 115, 0.3);
+        }
+
+        .tag-limit-hint {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid var(--accent-light);
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: rgba(255,255,255,0.6);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            border-color: var(--accent);
+            background: white;
+        }
+
+        textarea::placeholder, input[type="text"]::placeholder {
+            color: #bcaaa4;
+            font-style: italic;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input[type="text"] {
+            height: 48px;
+        }
+
+        .custom-tags-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            min-height: 36px;
+        }
+
+        .custom-tag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(212, 163, 115, 0.15);
+            color: var(--accent);
+            border-radius: 16px;
+            font-size: 0.85rem;
+            animation: scaleIn 0.2s ease-out;
+        }
+
+        .custom-tag-chip .remove {
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .custom-tag-chip .remove:hover {
+            opacity: 1;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(212, 163, 115, 0.4);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 163, 115, 0.08);
+        }
+
+        .loading-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--accent-light);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .loading-sub {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            max-width: 280px;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: var(--accent-light);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            animation: progress 15s ease-out forwards;
+            border-radius: 2px;
+        }
+
+        .result-image-container {
+            position: relative;
+            margin: -24px -24px 20px -24px;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #faf6f1, #f5ebe0);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .result-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .result-quote {
+            font-style: italic;
+            color: var(--text-light);
+            text-align: center;
+            padding: 16px 0;
+            border-top: 1px dashed var(--accent-light);
+            border-bottom: 1px dashed var(--accent-light);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .result-tag {
+            padding: 4px 12px;
+            background: rgba(212, 163, 115, 0.12);
+            color: var(--accent);
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        .wall-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .wall-item {
+            background: var(--card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px var(--shadow);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(212, 163, 115, 0.1);
+        }
+
+        .wall-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .wall-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .wall-item-info {
+            padding: 10px 12px;
+        }
+
+        .wall-item-tags {
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .wall-item-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .wall-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .wall-empty .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 -2px 12px var(--shadow);
+            margin-top: auto;
+            position: sticky;
+            bottom: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            transition: color 0.3s;
+            padding: 4px 16px;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-item .nav-icon {
+            font-size: 1.3rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(93, 64, 55, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            line-height: 1;
+        }
+
+        .modal-image {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--text);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            z-index: 200;
+            transition: transform 0.4s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+            margin: 20px 0;
+        }
+
+        .section-hint {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes progress {
+            0% { width: 5%; }
+            100% { width: 95%; }
+        }
+
+        @media (max-width: 400px) {
+            .container { padding: 16px; }
+            .logo { font-size: 2rem; }
+            .wall-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">心象卡片</div>
+            <div class="subtitle">AI「心」力量 · 让彼此温柔看见</div>
+        </div>
+
+        <!-- 输入页 -->
+        <div id="page-input" class="page active">
+            <!-- 预设标签 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">🌿</span> 此刻的你，是什么状态？</div>
+                <div class="tags-container" id="emotionTags">
+                    <button class="tag" data-value="疲惫的">疲惫的</button>
+                    <button class="tag" data-value="焦虑的">焦虑的</button>
+                    <button class="tag" data-value="孤独的">孤独的</button>
+                    <button class="tag" data-value="迷茫的">迷茫的</button>
+                    <button class="tag" data-value="坚强的">坚强的</button>
+                    <button class="tag" data-value="柔软的">柔软的</button>
+                    <button class="tag" data-value="渴望被理解的">渴望被理解的</button>
+                    <button class="tag" data-value="敏感的">敏感的</button>
+                    <button class="tag" data-value="勇敢的">勇敢的</button>
+                    <button class="tag" data-value="安静的">安静的</button>
+                    <button class="tag" data-value="失落的">失落的</button>
+                    <button class="tag" data-value="期待的">期待的</button>
+                    <button class="tag" data-value="温暖的">温暖的</button>
+                    <button class="tag" data-value="矛盾的">矛盾的</button>
+                    <button class="tag" data-value="小心翼翼的">小心翼翼的</button>
+                    <button class="tag" data-value="充满希望的">充满希望的</button>
+                    <button class="tag" data-value="紧绷的">紧绷的</button>
+                    <button class="tag" data-value="自由的">自由的</button>
+                    <button class="tag" data-value="被忽略的">被忽略的</button>
+                    <button class="tag" data-value="平静的">平静的</button>
+                </div>
+                <div class="tag-limit-hint">选择 1-3 个最贴近的词</div>
+            </div>
+
+            <!-- 自定义词汇 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">✨</span> 自定义关键词</div>
+                <div class="section-hint">输入任何你想表达的词汇，它们将融入画面。按回车或逗号添加。</div>
+                <input type="text" id="customTagInput" placeholder="例如：海边、星空、拥抱、小猫、雨天..." maxlength="20">
+                <div class="custom-tags-wrapper" id="customTagsWrapper"></div>
+                <div class="tag-limit-hint">已添加 <span id="customTagCount">0</span> / 5 个自定义词</div>
+            </div>
+
+            <!-- 内心话语 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">✉️</span> 给内心的小孩写一句话</div>
+                <textarea id="userText" placeholder="例如：谢谢你一直撑着，现在可以休息一会儿了..." maxlength="80"></textarea>
+            </div>
+
+            <button class="btn" id="generateBtn" onclick="startGenerate()">✨ 生成我的心象</button>
+        </div>
+
+        <!-- 加载页 -->
+        <div id="page-loading" class="page">
+            <div class="loading-container">
+                <div class="loader"></div>
+                <div class="loading-text">正在与AI共创你的心象...</div>
+                <div class="loading-sub">将难以名状的情感，转化为具体的画面<br>这个过程大约需要 15-30 秒</div>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            </div>
+        </div>
+
+        <!-- 结果页 -->
+        <div id="page-result" class="page">
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="result-image-container">
+                    <img id="resultImage" class="result-image" src="" alt="你的心象" style="display:none;">
+                    <div id="imagePlaceholder" class="image-placeholder">图片加载中...</div>
+                </div>
+                <div style="padding: 20px 24px 24px;">
+                    <div class="result-tags" id="resultTags"></div>
+                    <div class="result-quote" id="resultText"></div>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="downloadImage()">📥 保存图片</button>
+                        <button class="btn btn-secondary" onclick="shareCard()">🔗 分享</button>
+                    </div>
+                    <button class="btn btn-secondary" style="margin-top: 12px;" onclick="backToInput()">🔄 再生成一张</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 共鸣墙页 -->
+        <div id="page-wall" class="page">
+            <div class="card">
+                <div class="card-title"><span class="icon">🌌</span> 共鸣墙</div>
+                <div style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 16px; line-height: 1.5;">
+                    每一张心象都是一颗星星。你并不孤独，这些情绪也曾在他人的夜空中闪烁。
+                </div>
+                <div class="wall-grid" id="wallGrid"></div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="nav-bar">
+            <button class="nav-item active" onclick="switchPage('input')">
+                <span class="nav-icon">🎨</span>
+                <span>创作</span>
+            </button>
+            <button class="nav-item" onclick="switchPage('wall')">
+                <span class="nav-icon">🌌</span>
+                <span>共鸣墙</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <div id="modalTags" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;"></div>
+            <div id="modalText" style="color: var(--text-light); font-style: italic; line-height: 1.6;"></div>
+            <div id="modalDate" style="font-size: 0.75rem; color: #bcaaa4; margin-top: 12px;"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let selectedTags = [];
+        let customTags = [];
+        let currentResult = null;
+        const MAX_TAGS = 3;
+        const MAX_CUSTOM_TAGS = 5;
+
+        // 预设标签选择
+        document.getElementById('emotionTags').addEventListener('click', function(e) {
+            if (e.target.classList.contains('tag')) {
+                const tag = e.target;
+                const value = tag.dataset.value;
+
+                if (tag.classList.contains('selected')) {
+                    tag.classList.remove('selected');
+                    selectedTags = selectedTags.filter(t => t !== value);
+                } else {
+                    if (selectedTags.length >= MAX_TAGS) {
+                        showToast(`最多选择 ${MAX_TAGS} 个预设标签`);
+                        return;
+                    }
+                    tag.classList.add('selected');
+                    selectedTags.push(value);
+                }
+            }
+        });
+
+        // 自定义标签输入
+        const customInput = document.getElementById('customTagInput');
+        const customWrapper = document.getElementById('customTagsWrapper');
+        const customCount = document.getElementById('customTagCount');
+
+        customInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ',' || e.key === '，') {
+                e.preventDefault();
+                addCustomTag();
+            }
+        });
+
+        customInput.addEventListener('blur', function() {
+            if (this.value.trim()) addCustomTag();
+        });
+
+        function addCustomTag() {
+            const val = customInput.value.trim().replace(/[,，]/g, '');
+            if (!val) return;
+
+            if (customTags.length >= MAX_CUSTOM_TAGS) {
+                showToast(`最多添加 ${MAX_CUSTOM_TAGS} 个自定义词`);
+                customInput.value = '';
+                return;
+            }
+
+            if (customTags.includes(val)) {
+                showToast('该词汇已添加');
+                customInput.value = '';
+                return;
+            }
+
+            customTags.push(val);
+            renderCustomTags();
+            customInput.value = '';
+            customCount.textContent = customTags.length;
+        }
+
+        function removeCustomTag(tag) {
+            customTags = customTags.filter(t => t !== tag);
+            renderCustomTags();
+            customCount.textContent = customTags.length;
+        }
+
+        function renderCustomTags() {
+            customWrapper.innerHTML = customTags.map(tag => `
+                <span class="custom-tag-chip">
+                    ${tag}
+                    <span class="remove" onclick="removeCustomTag('${tag}')">&times;</span>
+                </span>
+            `).join('');
+        }
+
+        function switchPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            if (pageName === 'input') {
+                document.getElementById('page-input').classList.add('active');
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if (pageName === 'wall') {
+                document.getElementById('page-wall').classList.add('active');
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+                renderWall();
+            }
+        }
+
+        async function startGenerate() {
+            if (selectedTags.length === 0 && customTags.length === 0) {
+                showToast('请至少选择1个标签或输入1个自定义词');
+                return;
+            }
+
+            const userText = document.getElementById('userText').value.trim();
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-loading').classList.add('active');
+
+            // 构建Prompt
+            const tagsEn = {
+                '疲惫的': 'exhausted, tired', '焦虑的': 'anxious, worried', '孤独的': 'lonely, alone',
+                '迷茫的': 'confused, lost', '坚强的': 'strong, resilient', '柔软的': 'soft, gentle',
+                '渴望被理解的': 'longing to be understood', '敏感的': 'sensitive, delicate',
+                '勇敢的': 'brave, courageous', '安静的': 'quiet, peaceful', '失落的': 'disappointed, lost',
+                '期待的': 'hopeful, expectant', '温暖的': 'warm, cozy', '矛盾的': 'conflicted, torn',
+                '小心翼翼的': 'careful, cautious', '充满希望的': 'full of hope', '紧绷的': 'tense, stressed',
+                '自由的': 'free, liberated', '被忽略的': 'neglected, overlooked', '平静的': 'calm, serene'
+            };
+
+            const allTags = [...selectedTags, ...customTags];
+            const enPresetTags = selectedTags.map(t => tagsEn[t] || t).join(', ');
+            const enCustomTags = customTags.join(', ');
+
+            let promptParts = ['A watercolor painting of inner child'];
+            if (enPresetTags) promptParts.push(enPresetTags);
+            if (enCustomTags) promptParts.push(enCustomTags);
+            if (userText) promptParts.push(userText);
+            promptParts.push('soft warm colors, dreamy lighting, healing art, pastel tones, hand-drawn illustration, emotional, studio ghibli style, soft edges, gentle background, 8k, detailed');
+
+            const prompt = promptParts.join(', ');
+
+            const encodedPrompt = encodeURIComponent(prompt);
+            const seed = Math.floor(Math.random() * 100000);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&seed=${seed}&nologo=true&negative_prompt=blurry, dark, scary, horror, ugly, deformed, distorted`;
+
+            try {
+                await preloadImage(imageUrl);
+
+                currentResult = {
+                    id: Date.now(),
+                    imageUrl: imageUrl,
+                    tags: allTags,
+                    text: userText || '（无言的温柔）',
+                    date: new Date().toLocaleString('zh-CN')
+                };
+
+                saveToWall(currentResult);
+                showResult(currentResult);
+
+            } catch (err) {
+                console.error(err);
+                showToast('图片生成失败，请重试');
+                backToInput();
+            }
+        }
+
+        function preloadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = resolve;
+                img.onerror = reject;
+                setTimeout(() => reject(new Error('timeout')), 45000);
+                img.src = url;
+            });
+        }
+
+        function showResult(result) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-result').classList.add('active');
+
+            const img = document.getElementById('resultImage');
+            const placeholder = document.getElementById('imagePlaceholder');
+
+            img.src = result.imageUrl;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+
+            const tagsContainer = document.getElementById('resultTags');
+            tagsContainer.innerHTML = result.tags.map(t => `<span class="result-tag">${t}</span>`).join('');
+
+            document.getElementById('resultText').textContent = result.text ? `「${result.text}」` : '';
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        }
+
+        function backToInput() {
+            selectedTags = [];
+            customTags = [];
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+            document.getElementById('userText').value = '';
+            customInput.value = '';
+            renderCustomTags();
+            customCount.textContent = '0';
+            document.getElementById('resultImage').style.display = 'none';
+            document.getElementById('imagePlaceholder').style.display = 'flex';
+
+            switchPage('input');
+        }
+
+        function saveToWall(item) {
+            let wall = JSON.parse(localStorage.getItem('mindCanvas_wall') || '[]');
+            wall.unshift(item);
+            if (wall.length > 50) wall = wall.slice(0, 50);
+            localStorage.setItem('mindCanvas_wall', JSON.stringify(wall));
+        }
+
+        function renderWall() {
+            const wall = JSON.parse(localStorage.getItem('mindCanvas_wall') || '[]');
+            const grid = document.getElementById('wallGrid');
+
+            if (wall.length === 0) {
+                grid.innerHTML = `
+                    <div class="wall-empty">
+                        <div class="icon">🌱</div>
+                        <div>还没有心象卡片</div>
+                        <div style="font-size: 0.8rem; margin-top: 8px;">去创作第一张吧</div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = wall.map((item, idx) => `
+                <div class="wall-item" onclick="openModal(${idx})">
+                    <img src="${item.imageUrl}" alt="心象" loading="lazy">
+                    <div class="wall-item-info">
+                        <div class="wall-item-tags">${item.tags.join(' · ')}</div>
+                        <div class="wall-item-text">${item.text}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(index) {
+            const wall = JSON.parse(localStorage.getItem('mindCanvas_wall') || '[]');
+            const item = wall[index];
+            if (!item) return;
+
+            document.getElementById('modalImage').src = item.imageUrl;
+            document.getElementById('modalTags').innerHTML = item.tags.map(t => 
+                `<span style="padding:2px 8px; background:rgba(212,163,115,0.12); color:var(--accent); border-radius:8px; font-size:0.8rem;">${t}</span>`
+            ).join('');
+            document.getElementById('modalText').textContent = item.text ? `「${item.text}」` : '';
+            document.getElementById('modalDate').textContent = item.date;
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal(e) {
+            if (!e || e.target.id === 'modal' || e.target.classList.contains('modal-close')) {
+                document.getElementById('modal').classList.remove('active');
+            }
+        }
+
+        function downloadImage() {
+            if (!currentResult) return;
+            const a = document.createElement('a');
+            a.href = currentResult.imageUrl;
+            a.download = `心象_${Date.now()}.png`;
+            a.target = '_blank';
+            a.click();
+            showToast('图片已保存');
+        }
+
+        function shareCard() {
+            if (!currentResult) return;
+            const data = btoa(encodeURIComponent(JSON.stringify(currentResult)));
+            const url = window.location.origin + window.location.pathname + '#share=' + data;
+
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('链接已复制，发给朋友看看吧');
+            }).catch(() => {
+                showToast('复制失败，请手动复制地址栏');
+            });
+        }
+
+        function checkSharedCard() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#share=')) {
+                try {
+                    const data = JSON.parse(decodeURIComponent(atob(hash.slice(7))));
+                    currentResult = data;
+                    showResult(data);
+                    saveToWall(data);
+                    showToast('你收到了一张心象卡片');
+                    history.replaceState(null, null, window.location.pathname);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        checkSharedCard();
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
