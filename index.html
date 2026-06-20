@@ -905,6 +905,84 @@
         }
         .scan-progress-bar { height: 100%; background: #c4956a; transition: width 0.5s; width: 0%; }
 
+        /* ---- 引导音频播放器 ---- */
+        .guide-player-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 16px rgba(93,64,55,0.06);
+            border: 1px solid rgba(212,163,115,0.12);
+        }
+        .guide-player-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .guide-icon { font-size: 1.5rem; }
+        .guide-player-info { flex: 1; }
+        .guide-player-title { font-weight: 600; color: #5d4037; font-size: 0.92rem; }
+        .guide-player-desc { font-size: 0.72rem; color: #a1887f; margin-top: 1px; }
+
+        .guide-progress-wrap { margin-bottom: 6px; }
+        .guide-progress-bg {
+            width: 100%; height: 5px;
+            background: #e9c496;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        .guide-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c4956a, #d4a373);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .guide-time {
+            font-size: 0.75rem;
+            color: #bcaaa4;
+            margin-bottom: 10px;
+            font-variant-numeric: tabular-nums;
+        }
+        .guide-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .guide-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 1.5px solid #e9c496;
+            background: transparent;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+        .guide-btn:active { transform: scale(0.9); background: rgba(196,149,106,0.08); }
+        .guide-btn.playing { background: rgba(196,149,106,0.12); border-color: #c4956a; }
+
+        .guide-volume-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .guide-vol-icon { font-size: 0.8rem; color: #a1887f; }
+        .guide-volume {
+            width: 100px; height: 4px;
+            accent-color: #c4956a;
+            cursor: pointer;
+        }
+
+
+
 
 </head>
 <body>
@@ -1111,6 +1189,32 @@
                 <button class="exercise-tab" data-ex="box">箱式呼吸</button>
                 <button class="exercise-tab" data-ex="scan">身体扫描</button>
             </div>
+            <!-- 放松引导音频播放器 -->
+            <div class="guide-player-card">
+                <div class="guide-player-header">
+                    <span class="guide-icon">🎧</span>
+                    <div class="guide-player-info">
+                        <div class="guide-player-title">放松引导音频</div>
+                        <div class="guide-player-desc">你录制的完整引导练习</div>
+                    </div>
+                </div>
+                <div class="guide-progress-wrap">
+                    <div class="guide-progress-bg" id="guideProgressBg">
+                        <div class="guide-progress-fill" id="guideProgressFill"></div>
+                    </div>
+                </div>
+                <div class="guide-time" id="guideTime">0:00 / 0:00</div>
+                <div class="guide-buttons">
+                    <button class="guide-btn" id="guidePlayBtn" onclick="toggleGuidePlay()">▶️</button>
+                    <button class="guide-btn" id="guidePauseBtn" onclick="pauseGuide()">⏸️</button>
+                    <button class="guide-btn" id="guideStopBtn" onclick="stopGuide()">⏹️</button>
+                </div>
+                <div class="guide-volume-row">
+                    <span class="guide-vol-icon">🔊</span>
+                    <input type="range" class="guide-volume" id="guideVolume" min="0" max="1" step="0.05" value="1">
+                </div>
+            </div>
+
 
             <!-- 呼吸练习（4-7-8 和 箱式共用） -->
             <div class="breath-area" id="breathArea">
@@ -2211,89 +2315,46 @@ ${recentChats}
 
         
 
-        /* ============================================================
-           Background Music (Web Audio API)
+                /* ============================================================
+           Background Music (HTML Audio)
            ============================================================ */
-        let audioCtx = null;
-        let musicNodes = null;
+        const bgAudio = $('bgAudio');
         let isMusicPlaying = false;
-
-        function initAudioContext() {
-            if (audioCtx) return;
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            } catch(e) {
-                showToast('您的浏览器不支持音频播放');
-            }
-        }
+        let bgFadeTimer = null;
 
         function startMusic() {
-            initAudioContext();
-            if (!audioCtx || musicNodes) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            // Create ambient drone: A2 + A3 octave + subtle modulation
-            const osc1 = audioCtx.createOscillator();
-            osc1.type = 'sine';
-            osc1.frequency.value = 110;
-
-            const osc2 = audioCtx.createOscillator();
-            osc2.type = 'sine';
-            osc2.frequency.value = 220;
-
-            // Gentle LFO for movement
-            const lfo = audioCtx.createOscillator();
-            lfo.type = 'sine';
-            lfo.frequency.value = 0.08;
-
-            const lfoGain = audioCtx.createGain();
-            lfoGain.gain.value = 3;
-
-            // Filter
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.value = 400;
-
-            // Master volume with fade-in
-            const masterGain = audioCtx.createGain();
-            masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-            masterGain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 3);
-
-            // Connect
-            lfo.connect(lfoGain);
-            lfoGain.connect(osc1.frequency);
-            lfoGain.connect(osc2.frequency);
-
-            osc1.connect(filter);
-            osc2.connect(filter);
-            filter.connect(masterGain);
-            masterGain.connect(audioCtx.destination);
-
-            osc1.start();
-            osc2.start();
-            lfo.start();
-
-            musicNodes = { osc1, osc2, lfo, masterGain, filter };
+            bgAudio.volume = 0;
+            bgAudio.currentTime = 0;
+            bgAudio.play().catch(function(e) {
+                showToast('点击页面任意位置后即可播放音乐');
+            });
+            if (bgFadeTimer) clearInterval(bgFadeTimer);
+            let vol = 0;
+            bgFadeTimer = setInterval(function() {
+                vol += 0.03;
+                if (vol >= 0.25) { vol = 0.25; clearInterval(bgFadeTimer); bgFadeTimer = null; }
+                bgAudio.volume = vol;
+            }, 80);
             isMusicPlaying = true;
         }
 
         function stopMusic() {
-            if (!musicNodes || !audioCtx) return;
-            // Fade out
-            musicNodes.masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
-            setTimeout(() => {
-                if (!musicNodes) return;
-                musicNodes.osc1.stop();
-                musicNodes.osc2.stop();
-                musicNodes.lfo.stop();
-                musicNodes = null;
-                isMusicPlaying = false;
-            }, 1200);
+            if (bgFadeTimer) clearInterval(bgFadeTimer);
+            let vol = bgAudio.volume;
+            bgFadeTimer = setInterval(function() {
+                vol -= 0.04;
+                if (vol <= 0) {
+                    vol = 0; clearInterval(bgFadeTimer); bgFadeTimer = null;
+                    bgAudio.pause();
+                    bgAudio.currentTime = 0;
+                }
+                bgAudio.volume = vol;
+            }, 80);
             isMusicPlaying = false;
         }
 
         const musicToggle = $('musicToggle');
-        musicToggle.addEventListener('click', () => {
+        musicToggle.addEventListener('click', function() {
             if (isMusicPlaying) {
                 stopMusic();
                 musicToggle.textContent = '🔇';
@@ -2306,6 +2367,91 @@ ${recentChats}
         });
 
         /* ============================================================
+           Guide Audio Player
+           ============================================================ */
+        const guideAudio = $('guideAudio');
+        let isGuidePlaying = false;
+
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
+            var m = Math.floor(seconds / 60);
+            var s = Math.floor(seconds % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        function updateGuideProgress() {
+            var fill = $('guideProgressFill');
+            var timeEl = $('guideTime');
+            if (!guideAudio.duration) return;
+            var pct = (guideAudio.currentTime / guideAudio.duration) * 100;
+            fill.style.width = pct + '%';
+            timeEl.textContent = formatTime(guideAudio.currentTime) + ' / ' + formatTime(guideAudio.duration);
+        }
+
+        // Update progress periodically (in case ontimeupdate fires infrequently)
+        setInterval(function() {
+            if (isGuidePlaying) updateGuideProgress();
+        }, 500);
+
+        // Auto-stop when audio ends
+        guideAudio.addEventListener('ended', function() {
+            isGuidePlaying = false;
+            $('guidePlayBtn').textContent = '▶️';
+            $('guidePlayBtn').classList.remove('playing');
+        });
+
+        // Click on progress bar to seek
+        document.getElementById('guideProgressBg').addEventListener('click', function(e) {
+            if (!guideAudio.duration) return;
+            var rect = this.getBoundingClientRect();
+            var pct = (e.clientX - rect.left) / rect.width;
+            guideAudio.currentTime = pct * guideAudio.duration;
+            updateGuideProgress();
+        });
+
+        function toggleGuidePlay() {
+            var btn = $('guidePlayBtn');
+            if (isGuidePlaying) {
+                guideAudio.pause();
+                isGuidePlaying = false;
+                btn.textContent = '▶️';
+                btn.classList.remove('playing');
+            } else {
+                // If ended, restart
+                if (guideAudio.ended) guideAudio.currentTime = 0;
+                guideAudio.play().catch(function(e) {
+                    showToast('点击页面后即可播放');
+                });
+                isGuidePlaying = true;
+                btn.textContent = '⏸';
+                btn.classList.add('playing');
+            }
+        }
+
+        function pauseGuide() {
+            if (!guideAudio.paused) {
+                guideAudio.pause();
+                isGuidePlaying = false;
+                $('guidePlayBtn').textContent = '▶️';
+                $('guidePlayBtn').classList.remove('playing');
+            }
+        }
+
+        function stopGuide() {
+            guideAudio.pause();
+            guideAudio.currentTime = 0;
+            isGuidePlaying = false;
+            $('guidePlayBtn').textContent = '▶️';
+            $('guidePlayBtn').classList.remove('playing');
+            updateGuideProgress();
+        }
+
+        // Volume control
+        $('guideVolume').addEventListener('input', function() {
+            guideAudio.volume = parseFloat(this.value);
+        });
+
+/* ============================================================
            Speech Synthesis (语音引导)
            ============================================================ */
         let speechSynth = window.speechSynthesis;
@@ -2647,5 +2793,8 @@ ${recentChats}
         init();
     })();
     </script>
+    <!-- 隐藏音频播放器 -->
+    <audio id="bgAudio" loop preload="auto" src="audio/bg.mp3"></audio>
+    <audio id="guideAudio" preload="auto" src="audio/guide.m4a"></audio>
 </body>
 </html>
