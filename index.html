@@ -1222,9 +1222,9 @@
                     </div>
                     <div class="guide-time" id="guideTime">0:00 / 0:00</div>
                     <div class="guide-buttons">
-                        <button class="guide-btn" id="guidePlayBtn" onclick="toggleGuidePlay()">▶️</button>
-                        <button class="guide-btn" id="guidePauseBtn" onclick="pauseGuide()">⏸️</button>
-                        <button class="guide-btn" id="guideStopBtn" onclick="stopGuide()">⏹️</button>
+                        <button class="guide-btn" id="guidePlayBtn" >▶️</button>
+                        <button class="guide-btn" id="guidePauseBtn" >⏸️</button>
+                        <button class="guide-btn" id="guideStopBtn" >⏹️</button>
                     </div>
                     <div class="guide-volume-row">
                         <span class="guide-vol-icon">🔊</span>
@@ -2795,10 +2795,50 @@ ${recentChats}
         $('guideVolume').addEventListener('input', function() {
             guideAudio.volume = parseFloat(this.value);
         });
-        // Export guide player functions for onclick handlers
-        window.toggleGuidePlay = toggleGuidePlay;
-        window.pauseGuide = pauseGuide;
-        window.stopGuide = stopGuide;
+
+        // Attach event listeners from within IIFE (no onclick scope issues)
+        $('guidePlayBtn').addEventListener('click', function() {
+            var btn = $('guidePlayBtn');
+            if (isGuidePlaying) {
+                guideAudio.pause();
+                isGuidePlaying = false;
+                btn.textContent = '▶️';
+                btn.classList.remove('playing');
+            } else {
+                if (guideAudio.ended) guideAudio.currentTime = 0;
+                guideAudio.play().then(function() {
+                    btn.textContent = '⏸';
+                    btn.classList.add('playing');
+                    isGuidePlaying = true;
+                }).catch(function(e) {
+                    isGuidePlaying = false;
+                    btn.textContent = '▶️';
+                    btn.classList.remove('playing');
+                    showToast('音频播放失败: ' + e.message);
+                    console.warn('guideAudio play error:', e);
+                });
+            }
+        });
+
+        $('guidePauseBtn').addEventListener('click', function() {
+            guideAudio.pause();
+            isGuidePlaying = false;
+            var btn = $('guidePlayBtn');
+            btn.textContent = '▶️';
+            btn.classList.remove('playing');
+        });
+
+        $('guideStopBtn').addEventListener('click', function() {
+            guideAudio.pause();
+            guideAudio.currentTime = 0;
+            isGuidePlaying = false;
+            var btn = $('guidePlayBtn');
+            btn.textContent = '▶️';
+            btn.classList.remove('playing');
+            updateGuideProgress();
+        });
+
+
 
 
 
