@@ -1205,8 +1205,7 @@
                 <button class="exercise-tab" data-ex="scan">🧘 扫描</button>
             </div>
 
-            <!-- 呼吸练习（4-7-8 和 箱式共用） -->
-                    <!-- 引导音频（默认激活） -->
+<!-- 引导音频（默认激活） -->
             <div class="guide-area" id="guideArea">
                 <div class="guide-player-card" style="margin-bottom:0;box-shadow:none;border:none;">
                     <div class="guide-player-header">
@@ -1371,6 +1370,7 @@
             input:  $('page-input'),
             loading: $('page-loading'),
             result: $('page-result'),
+            relax:  $('page-relax'),
             wall:   $('page-wall')
         };
 
@@ -2368,6 +2368,19 @@ ${recentChats}
             }, 80);
             isMusicPlaying = false;
         }
+
+        const musicToggle = $('musicToggle');
+        musicToggle.addEventListener('click', function() {
+            if (isMusicPlaying) {
+                stopMusic();
+                musicToggle.textContent = '🔇';
+                musicToggle.classList.remove('playing');
+            } else {
+                startMusic();
+                musicToggle.textContent = '🎵';
+                musicToggle.classList.add('playing');
+            }
+        });
 
 /* ============================================================
            Speech Synthesis (语音引导)
