@@ -745,12 +745,175 @@
             .wall-grid { grid-template-columns: 1fr; }
         }
     </style>
+        /* ---- 背景音乐开关 ---- */
+        .music-toggle {
+            position: absolute;
+            top: 4px; right: 0;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(196,149,106,0.25);
+            background: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+        .music-toggle:active { transform: scale(0.92); }
+        .music-toggle.playing {
+            background: rgba(196,149,106,0.15);
+            border-color: #c4956a;
+            box-shadow: 0 0 12px rgba(196,149,106,0.3);
+        }
+
+        /* ---- 放松页 ---- */
+        .relax-header { text-align: center; margin-bottom: 16px; }
+        .relax-header h2 { font-size: 1.3rem; color: #5d4037; font-weight: 600; }
+        .relax-header p { font-size: 0.8rem; color: #8d6e63; margin-top: 4px; }
+
+        .exercise-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .exercise-tab {
+            flex: 1;
+            padding: 8px 6px;
+            border-radius: 12px;
+            border: 1.5px solid #e9c496;
+            background: transparent;
+            color: #8d6e63;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s;
+            font-family: inherit;
+            touch-action: manipulation;
+        }
+        .exercise-tab:active { transform: scale(0.96); }
+        .exercise-tab.active { background: #c4956a; color: #fff; border-color: #c4956a; }
+
+        .breath-area {
+            background: #fff;
+            border-radius: 20px;
+            padding: 36px 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 16px rgba(93,64,55,0.06);
+        }
+
+        .breath-circle-wrap {
+            position: relative;
+            width: 180px; height: 180px;
+            margin-bottom: 20px;
+        }
+        .breath-circle {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(196,149,106,0.35) 0%, rgba(196,149,106,0.1) 70%, transparent 100%);
+            transform: translate(-50%, -50%);
+            transition: width 0.45s ease, height 0.45s ease, opacity 0.45s ease;
+        }
+        .breath-circle.idle { width: 80px; height: 80px; opacity: 0.4; }
+        .breath-circle.expand { width: 170px; height: 170px; opacity: 0.85; }
+        .breath-circle.hold { width: 170px; height: 170px; opacity: 0.7; }
+        .breath-circle.contract { width: 50px; height: 50px; opacity: 0.25; }
+
+        .breath-phase-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #5d4037;
+            margin-bottom: 4px;
+            min-height: 2.2rem;
+        }
+        .breath-countdown {
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: #c4956a;
+            margin-bottom: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+        .breath-rounds {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .breath-round-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #e9c496;
+            transition: background 0.3s;
+        }
+        .breath-round-dot.done { background: #c4956a; }
+
+        .breath-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .breath-controls .btn { width: auto; padding: 10px 28px; font-size: 0.9rem; }
+
+        .voice-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #8d6e63;
+        }
+        .voice-toggle-row input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: #c4956a;
+            cursor: pointer;
+        }
+
+        /* ---- 身体扫描 ---- */
+        .scan-area {
+            background: #fff;
+            border-radius: 20px;
+            padding: 36px 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            min-height: 360px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 16px rgba(93,64,55,0.06);
+        }
+        .scan-area.active { display: flex; }
+        .scan-icon { font-size: 3rem; margin-bottom: 16px; }
+        .scan-body-part { font-size: 1.8rem; font-weight: 600; color: #5d4037; margin-bottom: 8px; }
+        .scan-text { font-size: 1rem; color: #8d6e63; line-height: 1.6; max-width: 280px; }
+        .scan-progress {
+            width: 200px; height: 3px;
+            background: #e9c496;
+            border-radius: 2px;
+            margin-top: 24px;
+            overflow: hidden;
+        }
+        .scan-progress-bar { height: 100%; background: #c4956a; transition: width 0.5s; width: 0%; }
+
+
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>心象卡片</h1>
             <p>AI「心」力量 · 让彼此温柔看见</p>
+            <button class="music-toggle" id="musicToggle" title="背景音乐">🔇</button>
+
         </div>
 
         <!-- ===== 每日一语 ===== -->
@@ -934,12 +1097,61 @@
         </div>
     </div>
 
-    <!-- 底部导航 -->
+    
+        <!-- ===== 放松页 ===== -->
+        <div id="page-relax" class="page">
+            <div class="relax-header">
+                <h2>🌿 放松练习</h2>
+                <p>跟着引导，让身体和心慢慢松下来</p>
+            </div>
+
+            <!-- 练习选择 -->
+            <div class="exercise-tabs" id="exerciseTabs">
+                <button class="exercise-tab active" data-ex="478">4-7-8 呼吸</button>
+                <button class="exercise-tab" data-ex="box">箱式呼吸</button>
+                <button class="exercise-tab" data-ex="scan">身体扫描</button>
+            </div>
+
+            <!-- 呼吸练习（4-7-8 和 箱式共用） -->
+            <div class="breath-area" id="breathArea">
+                <div class="breath-circle-wrap">
+                    <div class="breath-circle idle" id="breathCircle"></div>
+                </div>
+                <div class="breath-phase-text" id="breathPhaseText">准备好了吗？</div>
+                <div class="breath-countdown" id="breathCountdown"></div>
+                <div class="breath-rounds" id="breathRounds"></div>
+                <div class="breath-controls">
+                    <button class="btn" id="breathStartBtn">开始练习</button>
+                </div>
+                <div class="voice-toggle-row">
+                    <input type="checkbox" id="voiceToggle" checked><label for="voiceToggle">语音引导</label>
+                </div>
+            </div>
+
+            <!-- 身体扫描 -->
+            <div class="scan-area" id="scanArea">
+                <div class="scan-icon" id="scanIcon">🧘</div>
+                <div class="scan-body-part" id="scanBodyPart">头顶</div>
+                <div class="scan-text" id="scanText">感受你的头顶，让这里的皮肤放松...</div>
+                <div class="scan-progress"><div class="scan-progress-bar" id="scanProgressBar"></div></div>
+                <div class="breath-controls" style="margin-top: 20px;">
+                    <button class="btn" id="scanStartBtn">开始身体扫描</button>
+                </div>
+                <div class="voice-toggle-row">
+                    <input type="checkbox" id="scanVoiceToggle" checked><label for="scanVoiceToggle">语音引导</label>
+                </div>
+            </div>
+        </div>
+<!-- 底部导航 -->
     <div class="nav-outer">
         <div class="nav-inner">
             <button class="nav-item active" data-page="input">
                 <span class="ic">🎨</span>
                 <span>创作</span>
+            </button>
+            <button class="nav-item" data-page="relax">
+                <span class="ic">🌿</span>
+                <span>放松</span>
             </button>
             <button class="nav-item" data-page="wall">
                 <span class="ic">🌌</span>
@@ -1997,7 +2209,420 @@ ${recentChats}
             }
         }
 
+        
+
         /* ============================================================
+           Background Music (Web Audio API)
+           ============================================================ */
+        let audioCtx = null;
+        let musicNodes = null;
+        let isMusicPlaying = false;
+
+        function initAudioContext() {
+            if (audioCtx) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch(e) {
+                showToast('您的浏览器不支持音频播放');
+            }
+        }
+
+        function startMusic() {
+            initAudioContext();
+            if (!audioCtx || musicNodes) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            // Create ambient drone: A2 + A3 octave + subtle modulation
+            const osc1 = audioCtx.createOscillator();
+            osc1.type = 'sine';
+            osc1.frequency.value = 110;
+
+            const osc2 = audioCtx.createOscillator();
+            osc2.type = 'sine';
+            osc2.frequency.value = 220;
+
+            // Gentle LFO for movement
+            const lfo = audioCtx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = 0.08;
+
+            const lfoGain = audioCtx.createGain();
+            lfoGain.gain.value = 3;
+
+            // Filter
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 400;
+
+            // Master volume with fade-in
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            masterGain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 3);
+
+            // Connect
+            lfo.connect(lfoGain);
+            lfoGain.connect(osc1.frequency);
+            lfoGain.connect(osc2.frequency);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+
+            osc1.start();
+            osc2.start();
+            lfo.start();
+
+            musicNodes = { osc1, osc2, lfo, masterGain, filter };
+            isMusicPlaying = true;
+        }
+
+        function stopMusic() {
+            if (!musicNodes || !audioCtx) return;
+            // Fade out
+            musicNodes.masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
+            setTimeout(() => {
+                if (!musicNodes) return;
+                musicNodes.osc1.stop();
+                musicNodes.osc2.stop();
+                musicNodes.lfo.stop();
+                musicNodes = null;
+                isMusicPlaying = false;
+            }, 1200);
+            isMusicPlaying = false;
+        }
+
+        const musicToggle = $('musicToggle');
+        musicToggle.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                stopMusic();
+                musicToggle.textContent = '🔇';
+                musicToggle.classList.remove('playing');
+            } else {
+                startMusic();
+                musicToggle.textContent = '🎵';
+                musicToggle.classList.add('playing');
+            }
+        });
+
+        /* ============================================================
+           Speech Synthesis (语音引导)
+           ============================================================ */
+        let speechSynth = window.speechSynthesis;
+        let currentUtterance = null;
+
+        function speak(text, rate = 0.82, pitch = 1.0) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'zh-CN';
+            utter.rate = rate;
+            utter.pitch = pitch;
+            // Try to find a Chinese voice
+            const voices = window.speechSynthesis.getVoices();
+            const zhVoice = voices.find(v => v.lang.startsWith('zh'));
+            if (zhVoice) utter.voice = zhVoice;
+            currentUtterance = utter;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function cancelSpeech() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            currentUtterance = null;
+        }
+
+        // Pre-load voices
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices(); // trigger loading
+            setTimeout(() => { window.speechSynthesis.getVoices(); }, 200);
+        }
+
+        /* ============================================================
+           Relaxation Exercises
+           ============================================================ */
+        const BREATH_478 = {
+            phases: [
+                { name: '吸气...', duration: 4, action: 'expand', voice: '慢慢吸气...' },
+                { name: '屏住呼吸...', duration: 7, action: 'hold', voice: '屏住呼吸...' },
+                { name: '慢慢呼气...', duration: 8, action: 'contract', voice: '慢慢呼出...' }
+            ]
+        };
+
+        const BREATH_BOX = {
+            phases: [
+                { name: '吸气...', duration: 4, action: 'expand', voice: '吸气...' },
+                { name: '屏住呼吸...', duration: 4, action: 'hold', voice: '屏住呼吸...' },
+                { name: '呼气...', duration: 4, action: 'contract', voice: '呼气...' },
+                { name: '屏住呼吸...', duration: 4, action: 'hold', voice: '屏住呼吸...' }
+            ]
+        };
+
+        const BODY_SCAN_PARTS = [
+            { name: '头顶', icon: '🧘', text: '感受你的头顶，让这里的皮肤慢慢放松...' },
+            { name: '额头', icon: '🧘', text: '放松你的额头，放下所有紧张和思考...' },
+            { name: '眉心', icon: '🧘', text: '感受眉心之间的空间，让这里柔软下来...' },
+            { name: '眼睛', icon: '👁️', text: '让眼周的肌肉完全放松，沉沉的...' },
+            { name: '脸颊', icon: '😌', text: '放松脸颊和下巴，松开咬合...' },
+            { name: '脖子', icon: '🧘', text: '感受脖子的重量，让它慢慢松下来...' },
+            { name: '肩膀', icon: '🫂', text: '让肩膀沉下来，放下所有负担...' },
+            { name: '手臂', icon: '🧘', text: '感受手臂自然垂落，越来越沉...' },
+            { name: '双手', icon: '🤲', text: '放松手掌和每一根手指...' },
+            { name: '胸口', icon: '💗', text: '感受呼吸在胸口的自然起伏...' },
+            { name: '腹部', icon: '🧘', text: '让腹部柔软，随着呼吸自然起伏...' },
+            { name: '背部', icon: '🧘', text: '感受背部的支撑，让背部肌肉松开...' },
+            { name: '大腿', icon: '🧘', text: '放松大腿的肌肉，沉向地面...' },
+            { name: '小腿', icon: '🧘', text: '让小腿完全放松，轻轻的...' },
+            { name: '双脚', icon: '🦶', text: '感受脚掌与地面的接触，你在这里，你很安全...' }
+        ];
+
+        let relaxState = {
+            exerciseType: '478',
+            isActive: false,
+            currentPhase: 0,
+            currentRound: 0,
+            totalRounds: 4,
+            animId: null,
+            phaseTimer: null,
+            roundStartTime: 0
+        };
+
+        const breathArea = $('breathArea');
+        const scanArea = $('scanArea');
+        const breathCircle = $('breathCircle');
+        const breathPhaseText = $('breathPhaseText');
+        const breathCountdown = $('breathCountdown');
+        const breathRounds = $('breathRounds');
+        const breathStartBtn = $('breathStartBtn');
+        const voiceToggle = $('voiceToggle');
+        const scanVoiceToggle = $('scanVoiceToggle');
+        const scanStartBtn = $('scanStartBtn');
+        const scanBodyPart = $('scanBodyPart');
+        const scanText = $('scanText');
+        const scanProgressBar = $('scanProgressBar');
+        const scanIcon = $('scanIcon');
+        const exerciseTabs = $('exerciseTabs');
+
+        // --- Exercise tab switching ---
+        exerciseTabs.addEventListener('click', (e) => {
+            const tab = e.target.closest('.exercise-tab');
+            if (!tab) return;
+            if (relaxState.isActive) {
+                showToast('请先结束当前练习');
+                return;
+            }
+            exerciseTabs.querySelectorAll('.exercise-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const ex = tab.dataset.ex;
+            relaxState.exerciseType = ex;
+            relaxState.currentPhase = 0;
+            relaxState.currentRound = 0;
+
+            if (ex === 'scan') {
+                breathArea.style.display = 'none';
+                scanArea.classList.add('active');
+                scanStartBtn.textContent = '开始身体扫描';
+                resetScanUI();
+            } else {
+                breathArea.style.display = '';
+                scanArea.classList.remove('active');
+                resetBreathUI();
+            }
+        });
+
+        function resetBreathUI() {
+            breathCircle.className = 'breath-circle idle';
+            breathPhaseText.textContent = '准备好了吗？';
+            breathCountdown.textContent = '';
+            breathStartBtn.textContent = '开始练习';
+            relaxState.isActive = false;
+            if (relaxState.phaseTimer) { clearTimeout(relaxState.phaseTimer); relaxState.phaseTimer = null; }
+            if (relaxState.animId) { cancelAnimationFrame(relaxState.animId); relaxState.animId = null; }
+            cancelSpeech();
+
+            const ex = relaxState.exerciseType;
+            const data = ex === 'box' ? BREATH_BOX : BREATH_478;
+            const totalRounds = ex === 'box' ? 3 : 4;
+            relaxState.totalRounds = totalRounds;
+
+            breathRounds.innerHTML = Array(totalRounds).fill(0).map(() =>
+                '<span class="breath-round-dot"></span>'
+            ).join('');
+        }
+
+        function resetScanUI() {
+            relaxState.isActive = false;
+            if (relaxState.phaseTimer) { clearTimeout(relaxState.phaseTimer); relaxState.phaseTimer = null; }
+            cancelSpeech();
+            scanStartBtn.textContent = '开始身体扫描';
+            scanBodyPart.textContent = '头顶';
+            scanText.textContent = '感受你的头顶，让这里的皮肤放松...';
+            scanProgressBar.style.width = '0%';
+            scanIcon.textContent = '🧘';
+        }
+
+        // --- Breathing exercise ---
+        breathStartBtn.addEventListener('click', () => {
+            if (relaxState.isActive) {
+                // Stop
+                relaxState.isActive = false;
+                if (relaxState.phaseTimer) { clearTimeout(relaxState.phaseTimer); }
+                if (relaxState.animId) { cancelAnimationFrame(relaxState.animId); }
+                cancelSpeech();
+                breathStartBtn.textContent = '重新开始';
+                breathCircle.className = 'breath-circle idle';
+                breathPhaseText.textContent = '练习已暂停';
+                return;
+            }
+
+            // Start / Restart
+            relaxState.isActive = true;
+            relaxState.currentPhase = 0;
+            relaxState.currentRound = 0;
+            breathStartBtn.textContent = '停止';
+
+            const ex = relaxState.exerciseType;
+            const data = ex === 'box' ? BREATH_BOX : BREATH_478;
+
+            // Reset round dots
+            breathRounds.querySelectorAll('.breath-round-dot').forEach(d => d.classList.remove('done'));
+
+            runBreathPhase(data);
+        });
+
+        function runBreathPhase(data) {
+            if (!relaxState.isActive) return;
+
+            const phase = data.phases[relaxState.currentPhase];
+            const phaseDuration = phase.duration;
+
+            // Update UI
+            breathPhaseText.textContent = phase.name;
+            breathCircle.className = 'breath-circle ' + phase.action;
+            breathCountdown.textContent = phaseDuration;
+
+            // Voice guidance
+            const voiceOn = (relaxState.exerciseType === 'scan') ? scanVoiceToggle.checked : voiceToggle.checked;
+            if (voiceOn) speak(phase.voice || phase.name, 0.78);
+
+            // Countdown + phase animation
+            const startTime = Date.now();
+            const endTime = startTime + phaseDuration * 1000;
+
+            function tick() {
+                if (!relaxState.isActive) return;
+                const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+                breathCountdown.textContent = remaining;
+
+                if (remaining > 0) {
+                    relaxState.animId = requestAnimationFrame(tick);
+                } else {
+                    // Phase transition
+                    relaxState.animId = null;
+                    nextPhase(data);
+                }
+            }
+
+            // Start tick immediately
+            if (relaxState.animId) cancelAnimationFrame(relaxState.animId);
+            relaxState.animId = requestAnimationFrame(tick);
+        }
+
+        function nextPhase(data) {
+            if (!relaxState.isActive) return;
+
+            relaxState.currentPhase++;
+            const totalPhases = data.phases.length;
+
+            if (relaxState.currentPhase >= totalPhases) {
+                // Round complete
+                relaxState.currentRound++;
+                const dots = breathRounds.querySelectorAll('.breath-round-dot');
+                if (dots[relaxState.currentRound - 1]) {
+                    dots[relaxState.currentRound - 1].classList.add('done');
+                }
+
+                if (relaxState.currentRound >= relaxState.totalRounds) {
+                    // All rounds complete
+                    relaxState.isActive = false;
+                    breathPhaseText.textContent = '✨ 练习完成';
+                    breathCountdown.textContent = '';
+                    breathCircle.className = 'breath-circle idle';
+                    breathStartBtn.textContent = '再来一次';
+                    cancelSpeech();
+                    const voiceOn = voiceToggle.checked;
+                    if (voiceOn) speak('练习完成，感谢你的陪伴', 0.82);
+                    return;
+                }
+
+                // Start new round
+                relaxState.currentPhase = 0;
+            }
+
+            // Small delay between phases
+            relaxState.phaseTimer = setTimeout(() => {
+                runBreathPhase(data);
+            }, 600);
+        }
+
+        // --- Body Scan ---
+        let scanState = { currentIdx: 0, isActive: false };
+
+        scanStartBtn.addEventListener('click', () => {
+            if (scanState.isActive) {
+                // Stop
+                scanState.isActive = false;
+                relaxState.isActive = false;
+                if (relaxState.phaseTimer) { clearTimeout(relaxState.phaseTimer); }
+                cancelSpeech();
+                scanStartBtn.textContent = '重新开始';
+                return;
+            }
+
+            // Start
+            scanState.isActive = true;
+            relaxState.isActive = true;
+            scanState.currentIdx = 0;
+            scanStartBtn.textContent = '停止';
+            runBodyScan();
+        });
+
+        function runBodyScan() {
+            if (!scanState.isActive) return;
+
+            const part = BODY_SCAN_PARTS[scanState.currentIdx];
+            scanIcon.textContent = part.icon;
+            scanBodyPart.textContent = part.name;
+            scanText.textContent = part.text;
+
+            const progress = ((scanState.currentIdx + 1) / BODY_SCAN_PARTS.length) * 100;
+            scanProgressBar.style.width = progress + '%';
+
+            const voiceOn = scanVoiceToggle.checked;
+            if (voiceOn) speak(part.text, 0.75);
+
+            relaxState.phaseTimer = setTimeout(() => {
+                scanState.currentIdx++;
+                if (scanState.currentIdx >= BODY_SCAN_PARTS.length) {
+                    // Complete
+                    scanState.isActive = false;
+                    relaxState.isActive = false;
+                    scanStartBtn.textContent = '再来一次';
+                    const voiceOn2 = scanVoiceToggle.checked;
+                    if (voiceOn2) speak('身体扫描完成，你在这里，你很安全', 0.82);
+                    return;
+                }
+                runBodyScan();
+            }, 5500);
+        }
+
+        // Init relax page
+        resetBreathUI();
+        scanArea.classList.remove('active');
+
+/* ============================================================
            Init
            ============================================================ */
         function init() {
