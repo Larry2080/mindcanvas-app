@@ -2795,6 +2795,12 @@ ${recentChats}
         $('guideVolume').addEventListener('input', function() {
             guideAudio.volume = parseFloat(this.value);
         });
+        // Export guide player functions for onclick handlers
+        window.toggleGuidePlay = toggleGuidePlay;
+        window.pauseGuide = pauseGuide;
+        window.stopGuide = stopGuide;
+
+
 
 /* ============================================================
            Init
